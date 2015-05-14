@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 class Client(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -29,6 +30,8 @@ class Entry(models.Model):
     end = models.DateTimeField(blank=True, null=True)
     description = models.CharField(max_length=100)
     project = models.ForeignKey('Project')
+
+    user = models.ForeignKey('auth.User', null=True)
 
     class Meta:
         verbose_name_plural = 'Entries'

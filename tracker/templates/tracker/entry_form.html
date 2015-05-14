@@ -1,11 +1,11 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<form method="POST" action="">
-    {% csrf_token %}
-    <table>
-    {{ form }}
-    </table>
-    <button type="submit">Create</button>
-</form>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <table>
+        {{ form.as_table }}
+        </table>
+        <button type="submit">{{ form.instance.pk|yesno:'Edit,Create' }}</button>
+    </form>
 {% endblock %}

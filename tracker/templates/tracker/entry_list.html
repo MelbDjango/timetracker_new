@@ -1,9 +1,42 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<ul>
-    {% for entry in object_list %}
-    <li> {{ entry }} </li>
+<a href="{% url 'entry-add' %}">New</a>
+
+{% regroup object_list by project as project_list %}
+{% for project in project_list %}
+<h2> {{ project.grouper }} </h2>
+<table>
+    <thead>
+        <tr>
+            <th> Start </th>
+            <th> End </th>
+            <th> User </th>
+            <th> Description </th>
+            <th> Project </th>
+            <th> Actions </th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for entry in project.list %}
+    <tr>
+        <td> {{ entry.start }} </td>
+        <td> {{ entry.end }} </td>
+        <td> {{ entry.user }} </td>
+        <td> {{ entry.description }} </td>
+        <td> {{ entry.project }} </td>
+        <td>
+            <a href="{% url 'entry-edit' entry_id=entry.pk %}">[edit]</a>
+            {% if not entry.end %}
+            <a href="{% url 'entry-stop' entry_id=entry.pk %}">[STOP!]</a>
+            {% else %}
+            <a href="{% url 'entry-continue' entry_id=entry.pk %}">[Continue]</a>
+            {% endif %}
+        </td>
+    </tr>
     {% endfor %}
-</ul>
-{% endblock %}
+    </tbody>
+</table>
+{% endfor %}
+{% endblock content %}

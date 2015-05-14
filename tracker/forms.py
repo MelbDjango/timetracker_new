@@ -9,11 +9,14 @@ class EntryForm(forms.ModelForm):
         model = models.Entry
         fields = '__all__'
 
+        widgets = {
+            'start': forms.DateTimeInput(attrs={'data-widget': 'picker'}),
+        }
+
     def clean(self):
         data = self.cleaned_data
         if 'start' in data and 'end' in data:
             if data['end']:
                 # Ensure end is after start
                 if data['start'] > data['end']:
-                    # raise forms.ValidationError('Start must be before End')
                     self.add_error('end', 'Start must be before End')
