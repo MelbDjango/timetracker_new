@@ -8,6 +8,7 @@ class EntryForm(forms.ModelForm):
     class Meta:
         model = models.Entry
         fields = '__all__'
+        exclude = ['user']
 
         widgets = {
             'start': forms.DateTimeInput(attrs={'data-widget': 'picker'}),

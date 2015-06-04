@@ -1,7 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+{% if user.is_authenticated %}
+<h2>Hello {{ user }}</h2>
+{% endif %}
+
+{% if messages %}
+<ul>
+{% for message in messages %}
+    <li {% if message.tags %}class="{{ message.tags }}"{% endif %}> {{ message }} </li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if perms.tracker.add_entry %}
 <a href="{% url 'entry-add' %}">New</a>
+{% endif %}
 
 {% regroup object_list by project as project_list %}
 {% for project in project_list %}
@@ -27,12 +42,14 @@
         <td> {{ entry.description }} </td>
         <td> {{ entry.project }} </td>
         <td>
+{% if entry.user == user %}
             <a href="{% url 'entry-edit' entry_id=entry.pk %}">[edit]</a>
             {% if not entry.end %}
             <a href="{% url 'entry-stop' entry_id=entry.pk %}">[STOP!]</a>
             {% else %}
             <a href="{% url 'entry-continue' entry_id=entry.pk %}">[Continue]</a>
             {% endif %}
+{% endif %}
         </td>
     </tr>
     {% endfor %}

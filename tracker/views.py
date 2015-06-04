@@ -1,8 +1,11 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
-from .models import Entry
 from .forms import EntryForm
+from .models import Entry
 
 
 def entry_list(request):
@@ -11,11 +14,18 @@ def entry_list(request):
     })
 
 
+@login_required
 def entry_add(request):
+    if not request.user.has_perm('tracker.add_entry'):
+        messages.warning(request, 'You do not have permission to add entries.')
+        return redirect('entry-list')
+
     if request.method == 'POST':
         form = EntryForm(request.POST)
         if form.is_valid():
-            entry = form.save()
+            entry = form.save(commit=False)
+            entry.user = request.user
+            entry.save()
             return redirect('entry-list')
     else:
         form = EntryForm()
@@ -23,8 +33,11 @@ def entry_add(request):
     return render(request, 'tracker/entry_form.html', {'form': form})
 
 
+@login_required
 def entry_edit(request, entry_id):
     entry = get_object_or_404(Entry, pk=entry_id)
+    if entry.user != request.user:
+        return HttpResponseForbidden()
 
     if request.method == 'POST':
         form = EntryForm(request.POST, instance=entry)
@@ -41,6 +54,7 @@ def entry_edit(request, entry_id):
     })
 
 
+@login_required
 def entry_stop(request, entry_id):
     entry = get_object_or_404(Entry, pk=entry_id)
 

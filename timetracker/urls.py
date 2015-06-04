@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^(?P<entry_id>\d+)/continue/$', views.entry_continue, name='entry-continue'),
 
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^accounts/', include('django.contrib.auth.urls')),
 ]
